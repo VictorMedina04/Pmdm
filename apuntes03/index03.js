@@ -1,13 +1,38 @@
 $(document).ready(function () {
-
-    $.ajax({
-        url: "https://swapi.dev/api/people",
-        method: "GET",
-    }).done(function (data) {
-
-        //JSON.parse toma texto en json q llega desde el servidor y lo transforma a un objeto
-        var json = JSON.parse(data)
-        //Lo q se programa aqui se ejecuta cuando se resuelve la peticion asincrona
-        //Cuando me llegue la respuesta del servidor
+    getPokemonListV2();
+  
+    $(document).on("click", "#btn-get-data", function () {
+      getPokemonListV2();
     });
-});
+  
+    function getPokemonListV1() {
+      $.ajax({
+        url: "https://pokeapi.co/api/v2/pokemon",
+        method: "GET",
+      }).done(function (resp) {
+        var listadoPomemon = resp.results;
+        listadoPomemon.forEach(function (pokemon) {
+          var template = `<p><h1 class="pokemon" pokemonid="1">${pokemon.name}</h1></p>`;
+          $("#data-content").append(template);
+        });
+      });
+    }
+  
+    function getPokemonListV2() {
+      $("#data-content").html("<img src='loading.gif' />");
+      $.ajax({
+        url: "https://pokeapi.co/api/v2/pokemon",
+        method: "GET",
+      }).done(function (resp) {
+        setTimeout(function () {
+          $("#data-content").html("");
+          var listadoPomemon = resp.results;
+          listadoPomemon.forEach(function (pokemon) {
+            var pokemonId = pokemon.url.split("/")[6];
+            var template = `<p><a href="detail.html?pid=${pokemonId}"><h1 class="pokemon" pokemonid="1">${pokemon.name}</h1><img src="https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/${pokemonId}.png"</a></p>`;
+            $("#data-content").append(template);
+          });
+        }, 1000);
+      });
+    }
+  });
